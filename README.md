@@ -74,7 +74,7 @@ function factorial(n) {
 
 At first glance, there is nothing special about this. *However, these code blocks are testable!* 
 
-This document includes the necessary code for testing within invisible code blocks. By examining the [source of this document](https://github.com/szkiba/mdcode/blob/master/README.md?plain=1), you can observe how effortlessly code blocks, even invisible ones, can be embedded using `mdcode`.
+This document includes the necessary code for testing within invisible code blocks. By examining the [source of this document](https://github.com/ezerfernandes/mdcode/blob/master/README.md?plain=1), you can observe how effortlessly code blocks, even invisible ones, can be embedded using `mdcode`.
 
 Code blocks embedded in this document can be saved to files using the [`mdcode extract`](#mdcode-extract) command. A `README_test.go` and a `README.test.js` file will be created in the current directory. After modification, the code blocks can be updated from these files to the document using the [`mdcode update`](#mdcode-update) command.
 
@@ -127,18 +127,18 @@ More examples can be found in the [examples](examples/) directory and in the [tu
 
 ### Install
 
-Precompiled binaries can be downloaded and installed from the [Releases](https://github.com/szkiba/mdcode/releases) page.
+Precompiled binaries can be downloaded and installed from the [Releases](https://github.com/ezerfernandes/mdcode/releases) page.
 
 If you have a go development environment, the installation can also be done with the following command:
 
 ```
-go install github.com/szkiba/mdcode@latest
+github.com/ezerfernandes/mdcode@latest
 ```
 
 It can even be run without installation using the following command:
 
 ```
-go run github.com/szkiba/mdcode@latest
+go run github.com/ezerfernandes/mdcode@latest
 ```
 
 ### Usage

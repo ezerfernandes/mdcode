@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/rodaine/table"
-	"github.com/szkiba/mdcode/internal/mdcode"
+	"github.com/ezerfernandes/mdcode/internal/mdcode"
 )
 
 func listRun(filename string, out io.Writer, opts *options) error {

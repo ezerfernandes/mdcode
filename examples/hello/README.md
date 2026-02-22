@@ -4,7 +4,7 @@
 
 In this example, the code blocks contain entire files. The test code required for testing is in invisible code blocks.
 
-If you look at the [source of this document](https://github.com/szkiba/mdcode/blob/master/examples/hello/README.md?plain=1), you can see how the embedding is done.
+If you look at the [source of this document](https://github.com/ezerfernandes/mdcode/blob/master/examples/hello/README.md?plain=1), you can see how the embedding is done.
 
 **JavaScript**
 ```js file=hello.js

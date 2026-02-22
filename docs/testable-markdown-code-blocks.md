@@ -21,11 +21,11 @@ For the above, we need a tool that can embed source files or a part of them in t
 
 Today, the most popular format for developer documentation is the Markdown format. Example code pieces can be placed in a Markdown document using so-called fenced code blocks.
 
-The [mdcode](https://github.com/szkiba/mdcode) command-line tool was created for the development and testing of Markdown fenced code blocks. It supports both example code testing/development processes: it is able to keep Markdown code blocks in sync with external source files, or part of them.
+The [mdcode](https://github.com/ezerfernandes/mdcode) command-line tool was created for the development and testing of Markdown fenced code blocks. It supports both example code testing/development processes: it is able to keep Markdown code blocks in sync with external source files, or part of them.
 
 ### Show me the code!
 
-Using [mdcode](https://github.com/szkiba/mdcode) is super easy. The first line of the fenced code block, the so-called *info-string*, must be supplemented with some metadata after the programming language. Such metadata is the `file`, which specifies the name of the file belonging to the code block. The `mdcode extract` command writes the contents of the code block into this file, and the `mdcode update` command updates the contents of the code block from here.
+Using [mdcode](https://github.com/ezerfernandes/mdcode) is super easy. The first line of the fenced code block, the so-called *info-string*, must be supplemented with some metadata after the programming language. Such metadata is the `file`, which specifies the name of the file belonging to the code block. The `mdcode extract` command writes the contents of the code block into this file, and the `mdcode update` command updates the contents of the code block from here.
 
 Sticking to the *Hello World* example:
 
@@ -128,7 +128,7 @@ function factorial(n) {
 }
 ```
 
-Many editors (such as Visual Studio Code) support the use of so-called `#region` comments for code folding. Regions marked in this way are usually named for readability. To avoid having to learn new, useless syntax, [mdcode](https://github.com/szkiba/mdcode) uses `#region` comments to mark embeddable parts of the source code. Simply add a `region` metadata to the fenced code block which contains the name of the region you want to embed.
+Many editors (such as Visual Studio Code) support the use of so-called `#region` comments for code folding. Regions marked in this way are usually named for readability. To avoid having to learn new, useless syntax, [mdcode](https://github.com/ezerfernandes/mdcode) uses `#region` comments to mark embeddable parts of the source code. Simply add a `region` metadata to the fenced code block which contains the name of the region you want to embed.
 
 This is how the code block above can be embedded from the region named `function` in the `factorial.test.js` file:
 

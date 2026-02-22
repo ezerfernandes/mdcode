@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/szkiba/mdcode/internal/region"
+	"github.com/ezerfernandes/mdcode/internal/region"
 )
 
 //go:embed testdata/testdoc.js

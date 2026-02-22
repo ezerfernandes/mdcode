@@ -1,4 +1,4 @@
-module github.com/szkiba/mdcode
+module github.com/ezerfernandes/mdcode
 
 go 1.21
 

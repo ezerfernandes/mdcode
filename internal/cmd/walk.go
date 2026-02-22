@@ -1,6 +1,6 @@
 package cmd
 
-import "github.com/szkiba/mdcode/internal/mdcode"
+import "github.com/ezerfernandes/mdcode/internal/mdcode"
 
 func walk(source []byte, walker mdcode.Walker, filter filterFunc) (bool, []byte, error) {
 	return mdcode.Walk(source, func(block *mdcode.Block) error {

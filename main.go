@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/szkiba/mdcode/internal/cmd"
+	"github.com/ezerfernandes/mdcode/internal/cmd"
 )
 
 //go:generate go run ./tools/gendoc ./README.md

@@ -4,7 +4,7 @@
 
 In this example, the examples consist of 4 code blocks each. Of course, any markdown text can be included between individual code blocks. The code block describing the outline of the source file is an invisible code block, just like the test code required for testing.
 
-If you look at the [source of this document](https://github.com/szkiba/mdcode/blob/master/examples/fibonacci/README.md?plain=1), you can see how the embedding is done.
+If you look at the [source of this document](https://github.com/ezerfernandes/mdcode/blob/master/examples/fibonacci/README.md?plain=1), you can see how the embedding is done.
 
 
 **JavaScript**

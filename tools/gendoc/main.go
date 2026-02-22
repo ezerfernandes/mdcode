@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra/doc"
-	"github.com/szkiba/mdcode/internal/cmd"
-	"github.com/szkiba/mdcode/internal/region"
+	"github.com/ezerfernandes/mdcode/internal/cmd"
+	"github.com/ezerfernandes/mdcode/internal/region"
 )
 
 func checkerr(err error) {

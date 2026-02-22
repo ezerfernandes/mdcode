@@ -10,7 +10,7 @@ import (
 
 	"github.com/liamg/memoryfs"
 	"github.com/spf13/cobra"
-	"github.com/szkiba/mdcode/internal/mdcode"
+	"github.com/ezerfernandes/mdcode/internal/mdcode"
 )
 
 //go:embed help/dump.md

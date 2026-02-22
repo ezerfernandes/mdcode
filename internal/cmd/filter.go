@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/gobwas/glob"
-	"github.com/szkiba/mdcode/internal/mdcode"
+	"github.com/ezerfernandes/mdcode/internal/mdcode"
 )
 
 type filterFunc func(string, mdcode.Meta) bool
