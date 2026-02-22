@@ -103,6 +103,7 @@ More examples can be found in the [examples](examples/) directory and in the [tu
 - allows you to add metadata to code blocks
 - programming language agnostic
 - dump code blocks as tar archive
+- execute shell commands on individual code blocks (linting, formatting, etc.)
 
 ### Use Cases
 
@@ -121,6 +122,10 @@ More examples can be found in the [examples](examples/) directory and in the [tu
   - use [`mdcode update`](#mdcode-update) to embed source fragments
   - use [`mdcode update`](#mdcode-update) to embed additional files (package.json, go.mod, etc.) as invisible code blocks
   - use [`mdcode extract`](#mdcode-extract) to extract working examples from the markdown documemt
+
+**Run tools on code blocks without file metadata**
+  - use [`mdcode exec`](#mdcode-exec) to run linters, formatters, or any shell command on individual code blocks
+  - use `mdcode exec --update` to apply formatting changes back to the markdown document
 
 **Save all examples for later use**
   - use [`mdcode dump`](#mdcode-dump) to create tar archive from code blocks
@@ -465,6 +470,7 @@ mdcode [flags] [filename]
 ### SEE ALSO
 
 * [mdcode dump](#mdcode-dump)	 - Dump markdown code blocks
+* [mdcode exec](#mdcode-exec)	 - Execute shell commands on individual code blocks
 * [mdcode extract](#mdcode-extract)	 - Extract markdown code blocks to the file system
 * [mdcode run](#mdcode-run)	 - Run shell commands on markdown code blocks
 * [mdcode update](#mdcode-update)	 - Update markdown code blocks from the file system
@@ -496,6 +502,55 @@ mdcode dump  [flags] [filename]
   -h, --help            help for dump
   -o, --output string   output file (default: standard output)
   -q, --quiet           suppress the status output
+```
+
+### Global Flags
+
+```
+  -f, --file strings          file filter (default [?*])
+  -l, --lang strings          language filter (default [?*])
+  -m, --meta stringToString   metadata filter (default [])
+```
+
+### SEE ALSO
+
+* [mdcode](#mdcode)	 - Markdown code block authoring tool
+
+---
+## mdcode exec
+
+Execute shell commands on individual code blocks
+
+### Synopsis
+
+Execute shell commands on individual code blocks
+
+Unlike other commands, `exec` works with all code blocks, including those without `file` metadata. Each code block is written to a temporary file and the specified shell command is executed on it.
+
+The shell command follows a double dash (`--`). Use `{}` as a placeholder for the temporary file path. Additional placeholders: `{lang}` (block language), `{index}` (block number), `{dir}` (temporary directory path).
+
+By default, the command runs once per code block. Use `--batch` to run the command once for all blocks, where `{}` expands to the space-separated list of all temporary file paths.
+
+By default, command output is displayed and the markdown file is not modified. Use `--update` to read back the (possibly modified) temporary files and update the code blocks in the markdown file. If the command exits with a non-zero status, the corresponding block is not updated.
+
+The optional argument of the `mdcode exec` command is the name of the markdown file. If it is missing, the `README.md` file in the current directory (if it exists) is processed.
+
+Code blocks are written to a temporary directory, which is deleted after execution (use `--keep` to preserve it). A specific directory can be set with `--dir`, in which case it is not deleted.
+
+
+```
+mdcode exec [flags] [filename] [-- command]
+```
+
+### Flags
+
+```
+      --batch        run command once for all files instead of once per block
+  -d, --dir string   base directory name (default ".")
+  -h, --help         help for exec
+  -k, --keep         don't remove temporary directory
+  -q, --quiet        suppress the status output
+      --update       update markdown code blocks with modified files
 ```
 
 ### Global Flags
