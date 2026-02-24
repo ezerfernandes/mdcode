@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -17,6 +18,16 @@ var (
 	version = "dev"
 	appname = "mdcode"
 )
+
+func init() {
+	if version != "dev" {
+		return
+	}
+
+	if info, ok := debug.ReadBuildInfo(); ok && info.Main.Version != "" && info.Main.Version != "(devel)" {
+		version = info.Main.Version
+	}
+}
 
 func Execute(args []string, stdout, stderr io.Writer) {
 	root := RootCmd()
