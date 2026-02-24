@@ -134,7 +134,7 @@ func execPerBlock(filename string, src []byte, dir string, opts *options, scr st
 
 		expanded := expandCommand(scr, info, dir)
 
-		opts.status("--- block %d (%s%s) : L%d-%d ---\n", info.index, info.lang, fileLabel(info.file), info.startLine, info.endLine)
+		opts.status("--- block %d (%s%s) : L%d-%d : %s ---\n", info.index, info.lang, fileLabel(info.file), info.startLine, info.endLine, filepath.Base(filename))
 
 		exitCode, execErr := runCommand(expanded, dir, os.Stdout, os.Stderr)
 		if execErr != nil {
