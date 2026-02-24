@@ -28,8 +28,9 @@ type blockInfo struct {
 
 func execCmd(opts *options) *cobra.Command {
 	var (
-		update bool
-		batch  bool
+		update  bool
+		batch   bool
+		verbose bool
 	)
 
 	cmd := &cobra.Command{ //nolint:exhaustruct
@@ -86,7 +87,7 @@ func execCmd(opts *options) *cobra.Command {
 				}
 			}
 
-			return execRun(source(args), opts, scr, update, batch)
+			return execRun(source(args), opts, scr, update, batch, verbose)
 		},
 
 		DisableAutoGenTag: true,
@@ -98,11 +99,12 @@ func execCmd(opts *options) *cobra.Command {
 	cmd.Flags().BoolVar(&update, "update", false, "update markdown code blocks with modified files")
 	cmd.Flags().BoolVar(&batch, "batch", false, "run command once for all files instead of once per block")
 	cmd.Flags().BoolVarP(&opts.keep, "keep", "k", false, "don't remove temporary directory")
+	cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "show the command being executed for each block")
 
 	return cmd
 }
 
-func execRun(filename string, opts *options, scr string, update, batch bool) error {
+func execRun(filename string, opts *options, scr string, update, batch, verbose bool) error {
 	src, err := os.ReadFile(filename)
 	if err != nil {
 		return err
@@ -117,10 +119,10 @@ func execRun(filename string, opts *options, scr string, update, batch bool) err
 		return execBatch(filename, src, absDir, opts, scr, update)
 	}
 
-	return execPerBlock(filename, src, absDir, opts, scr, update)
+	return execPerBlock(filename, src, absDir, opts, scr, update, verbose)
 }
 
-func execPerBlock(filename string, src []byte, dir string, opts *options, scr string, update bool) error {
+func execPerBlock(filename string, src []byte, dir string, opts *options, scr string, update, verbose bool) error {
 	index := 0
 	var failures int
 
@@ -134,7 +136,12 @@ func execPerBlock(filename string, src []byte, dir string, opts *options, scr st
 
 		expanded := expandCommand(scr, info, dir)
 
-		opts.status("--- block %d (%s%s) : L%d-%d : %s ---\n", info.index, info.lang, fileLabel(info.file), info.startLine, info.endLine, filepath.Base(filename))
+		displayIndex := info.index + 1
+		opts.status("--- block %d (%s%s) : L%d-%d : %s ---\n", displayIndex, info.lang, fileLabel(info.file), info.startLine, info.endLine, filepath.Base(filename))
+
+		if verbose {
+			opts.status("%s\n", expanded)
+		}
 
 		exitCode, execErr := runCommand(expanded, dir, os.Stdout, os.Stderr)
 		if execErr != nil {
@@ -145,11 +152,13 @@ func execPerBlock(filename string, src []byte, dir string, opts *options, scr st
 			failures++
 
 			if update {
-				opts.status("warning: block %d exited with %d, skipping update\n", info.index, exitCode)
+				opts.status("\nwarning: block %d exited with %d, skipping update\n", displayIndex, exitCode)
 
 				return nil
 			}
 		}
+
+		opts.status("\n")
 
 		if update {
 			newCode, readErr := os.ReadFile(info.tempPath)
