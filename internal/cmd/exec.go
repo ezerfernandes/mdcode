@@ -18,10 +18,12 @@ import (
 var execHelp string
 
 type blockInfo struct {
-	index    int
-	lang     string
-	file     string
-	tempPath string
+	index     int
+	lang      string
+	file      string
+	tempPath  string
+	startLine int
+	endLine   int
 }
 
 func execCmd(opts *options) *cobra.Command {
@@ -132,7 +134,7 @@ func execPerBlock(filename string, src []byte, dir string, opts *options, scr st
 
 		expanded := expandCommand(scr, info, dir)
 
-		opts.status("--- block %d (%s%s) ---\n", info.index, info.lang, fileLabel(info.file))
+		opts.status("--- block %d (%s%s) : L%d-%d ---\n", info.index, info.lang, fileLabel(info.file), info.startLine, info.endLine)
 
 		exitCode, execErr := runCommand(expanded, dir, os.Stdout, os.Stderr)
 		if execErr != nil {
@@ -262,9 +264,11 @@ func execBatch(filename string, src []byte, dir string, opts *options, scr strin
 
 func writeBlockToTemp(block *mdcode.Block, index int, dir string, status statusFunc) *blockInfo {
 	info := &blockInfo{
-		index: index,
-		lang:  block.Lang,
-		file:  block.Meta.Get(metaFile),
+		index:     index,
+		lang:      block.Lang,
+		file:      block.Meta.Get(metaFile),
+		startLine: block.StartLine,
+		endLine:   block.EndLine,
 	}
 
 	info.tempPath = filepath.Join(dir, tempFilename(block, index))

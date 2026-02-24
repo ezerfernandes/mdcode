@@ -95,7 +95,44 @@ func extractBlock(fcb *ast.FencedCodeBlock, source []byte) (*Block, error) {
 		return nil, err
 	}
 
-	return &Block{Lang: lang, Meta: meta, Code: extractCode(fcb, source)}, nil
+	block := &Block{Lang: lang, Meta: meta, Code: extractCode(fcb, source)}
+	block.StartLine, block.EndLine = extractLines(fcb, source)
+
+	return block, nil
+}
+
+func extractLines(fcb *ast.FencedCodeBlock, source []byte) (int, int) {
+	var startLine, endLine int
+
+	if fcb.Info != nil {
+		startLine = lineAt(source, fcb.Info.Segment.Start)
+	} else {
+		lines := fcb.Lines()
+		if lines.Len() > 0 {
+			startLine = lineAt(source, lines.At(0).Start) - 1
+		}
+	}
+
+	lines := fcb.Lines()
+	if lines.Len() > 0 {
+		endLine = lineAt(source, lines.At(lines.Len()-1).Stop)
+	} else if startLine > 0 {
+		endLine = startLine + 1
+	}
+
+	return startLine, endLine
+}
+
+func lineAt(source []byte, offset int) int {
+	line := 1
+
+	for i := 0; i < offset && i < len(source); i++ {
+		if source[i] == '\n' {
+			line++
+		}
+	}
+
+	return line
 }
 
 func extractCode(fcb *ast.FencedCodeBlock, source []byte) []byte {
