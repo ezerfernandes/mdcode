@@ -9,8 +9,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/spf13/cobra"
 	"github.com/ezerfernandes/mdcode/internal/mdcode"
+	"github.com/spf13/cobra"
 	"mvdan.cc/sh/v3/interp"
 	"mvdan.cc/sh/v3/syntax"
 )

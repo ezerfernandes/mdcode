@@ -6,8 +6,8 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	"github.com/ezerfernandes/mdcode/internal/region"
+	"github.com/stretchr/testify/require"
 )
 
 //go:embed testdata/testdoc.js
