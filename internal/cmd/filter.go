@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gobwas/glob"
 	"github.com/ezerfernandes/mdcode/internal/mdcode"
+	"github.com/gobwas/glob"
 )
 
 type filterFunc func(string, mdcode.Meta) bool
