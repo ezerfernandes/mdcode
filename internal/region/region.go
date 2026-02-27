@@ -1,3 +1,4 @@
+// Package region reads and replaces named #region/#endregion sections in source files.
 package region
 
 import (
@@ -58,6 +59,8 @@ func findRegion(source []byte, name string) (bool, int, int, error) {
 	return true, idxBegin[1], idxBegin[1] + idxEnd[0], nil
 }
 
+// Read returns the content between the #region and #endregion markers with the
+// given name. The bool return indicates whether the named region was found.
 func Read(source []byte, name string) ([]byte, bool, error) {
 	found, begin, end, err := findRegion(source, name)
 	if err != nil {
@@ -71,6 +74,8 @@ func Read(source []byte, name string) ([]byte, bool, error) {
 	return source[begin:end], true, nil
 }
 
+// Replace substitutes the content of the named region with value and returns
+// the updated source. The bool return indicates whether the named region was found.
 func Replace(source []byte, name string, value []byte) ([]byte, bool, error) {
 	found, begin, end, err := findRegion(source, name)
 	if err != nil {
@@ -90,6 +95,8 @@ func Replace(source []byte, name string, value []byte) ([]byte, bool, error) {
 	return res, true, nil
 }
 
+// Outline strips the body of every region, keeping only the #region and
+// #endregion markers. The bool return indicates whether any regions were found.
 func Outline(source []byte) ([]byte, bool, error) {
 	res := make([]byte, 0)
 	found := false
@@ -125,4 +132,6 @@ func Outline(source []byte) ([]byte, bool, error) {
 	return res, found, nil
 }
 
+// ErrMissingEndregion is returned by [Outline] when a #region marker has no
+// matching #endregion.
 var ErrMissingEndregion = errors.New("missing #endregion")

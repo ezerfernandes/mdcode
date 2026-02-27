@@ -9,8 +9,11 @@ import (
 	"github.com/google/shlex"
 )
 
+// Meta holds key-value metadata parsed from a fenced code block's info string.
 type Meta map[string]interface{}
 
+// Get returns the metadata value for the given key as a string.
+// It returns an empty string if the key is missing or the Meta is nil.
 func (m Meta) Get(name string) string {
 	if m == nil {
 		return ""
