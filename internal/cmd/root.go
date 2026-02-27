@@ -29,6 +29,7 @@ func init() {
 	}
 }
 
+// Execute runs the mdcode CLI with the given arguments and I/O writers.
 func Execute(args []string, stdout, stderr io.Writer) {
 	root := RootCmd()
 
@@ -42,6 +43,7 @@ func Execute(args []string, stdout, stderr io.Writer) {
 //go:embed help/root.md
 var rootHelp string
 
+// RootCmd builds and returns the top-level cobra command for the mdcode CLI.
 func RootCmd() *cobra.Command {
 	opts := new(options)
 

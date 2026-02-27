@@ -11,6 +11,9 @@ import (
 
 var reInfo = regexp.MustCompile(`\s*(\w+)\s*(.*)\s*`)
 
+// Walker is a callback invoked for each fenced code block found in a Markdown
+// document. The walker may modify block.Code in place; any changes are written
+// back into the document by [Walk].
 type Walker func(block *Block) error
 
 type change struct {
@@ -33,6 +36,9 @@ func (c *change) sizeIncrement() int {
 	return len(c.block.Code) - (stop - start)
 }
 
+// Walk parses a Markdown document and calls walker for every fenced code block.
+// If the walker modifies any block's Code, Walk returns true and the updated
+// document. When no blocks are modified, it returns false and a nil slice.
 func Walk(source []byte, walker Walker) (bool, []byte, error) {
 	parser := goldmark.DefaultParser()
 	reader := text.NewReader(source)
