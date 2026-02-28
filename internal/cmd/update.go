@@ -7,9 +7,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/spf13/cobra"
 	"github.com/ezerfernandes/mdcode/internal/mdcode"
 	"github.com/ezerfernandes/mdcode/internal/region"
+	"github.com/spf13/cobra"
 )
 
 //go:embed help/update.md
