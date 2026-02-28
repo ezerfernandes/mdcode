@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/spf13/cobra/doc"
 	"github.com/ezerfernandes/mdcode/internal/cmd"
 	"github.com/ezerfernandes/mdcode/internal/region"
+	"github.com/spf13/cobra/doc"
 )
 
 func checkerr(err error) {

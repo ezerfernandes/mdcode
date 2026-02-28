@@ -8,8 +8,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/rodaine/table"
 	"github.com/ezerfernandes/mdcode/internal/mdcode"
+	"github.com/rodaine/table"
 )
 
 func listRun(filename string, out io.Writer, opts *options) error {
