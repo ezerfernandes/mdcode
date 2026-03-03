@@ -2,3 +2,5 @@
 /mdcode.exe
 /build
 tmp/
+# Nightshift plan artifacts (keep out of version control)
+.nightshift-plan
