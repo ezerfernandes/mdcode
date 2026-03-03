@@ -26,7 +26,7 @@ func runCmd(opts *options) *cobra.Command {
 		Long:    runHelp,
 		Args:    checkargs,
 		PreRun: func(cmd *cobra.Command, _ []string) {
-			opts.createStatus(cmd.ErrOrStderr())
+			opts.createEmitter(cmd.ErrOrStderr())
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			script, args := script(cmd, args)
@@ -122,7 +122,7 @@ func runRun(filename string, opts *options, script string) error {
 		return err
 	}
 
-	opts.status("Executing in %s\n%s\n", opts.dir, script)
+	opts.emit.Emit(OpStart, "Executing in %s\n%s\n", opts.dir, script)
 
 	file, err := syntax.NewParser().Parse(strings.NewReader(script), "")
 	if err != nil {

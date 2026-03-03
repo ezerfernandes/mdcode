@@ -24,7 +24,7 @@ func dumpCmd(opts *options) *cobra.Command {
 		Long:    dumpHelp,
 		Args:    cobra.MaximumNArgs(1),
 		PreRun: func(cmd *cobra.Command, _ []string) {
-			opts.createStatus(cmd.ErrOrStderr())
+			opts.createEmitter(cmd.ErrOrStderr())
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			out, err := openOutput(opts.out, cmd)
@@ -50,7 +50,7 @@ func dumpCmd(opts *options) *cobra.Command {
 }
 
 func dumpRun(filename string, out io.Writer, opts *options) error {
-	opts.status("Dumping code blocks from %s\n", filename)
+	opts.emit.Emit(OpStart, "Dumping code blocks from %s\n", filename)
 
 	src, err := os.ReadFile(filename)
 	if err != nil {
@@ -60,7 +60,7 @@ func dumpRun(filename string, out io.Writer, opts *options) error {
 	mfs := memoryfs.New()
 
 	_, _, err = walk(src, func(block *mdcode.Block) error {
-		return dump(block, mfs, opts.dir, opts.status)
+		return dump(block, mfs, opts.dir, opts.emit)
 	}, opts.filter)
 	if err != nil {
 		return err
@@ -69,7 +69,7 @@ func dumpRun(filename string, out io.Writer, opts *options) error {
 	return archive(mfs, out)
 }
 
-func dump(block *mdcode.Block, mfs *memoryfs.FS, dir string, status statusFunc) error {
+func dump(block *mdcode.Block, mfs *memoryfs.FS, dir string, em emitter) error {
 	filename := block.Meta.Get(metaFile)
 	if len(filename) == 0 {
 		return nil
@@ -77,7 +77,7 @@ func dump(block *mdcode.Block, mfs *memoryfs.FS, dir string, status statusFunc) 
 
 	filename = rel(dir, filepath.FromSlash(filename))
 
-	code, partial, err := saveTransform(filename, block, mfs, status)
+	code, partial, err := saveTransform(filename, block, mfs, em)
 	if err != nil {
 		return err
 	}

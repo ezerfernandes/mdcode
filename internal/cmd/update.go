@@ -23,7 +23,7 @@ func updateCmd(opts *options) *cobra.Command {
 		Long:    updateHelp,
 		Args:    checkargs,
 		PreRun: func(cmd *cobra.Command, _ []string) {
-			opts.createStatus(cmd.ErrOrStderr())
+			opts.createEmitter(cmd.ErrOrStderr())
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return updateRun(source(args), opts)
@@ -39,7 +39,7 @@ func updateCmd(opts *options) *cobra.Command {
 }
 
 func updateRun(filename string, opts *options) error {
-	opts.status("Updating code blocks in %s\n", filename)
+	opts.emit.Emit(OpStart, "Updating code blocks in %s\n", filename)
 
 	src, err := os.ReadFile(filename)
 	if err != nil {
@@ -47,7 +47,7 @@ func updateRun(filename string, opts *options) error {
 	}
 
 	modified, res, e := walk(src, func(block *mdcode.Block) error {
-		return load(block, opts.dir, opts.status)
+		return load(block, opts.dir, opts.emit)
 	}, opts.filter)
 	if e != nil {
 		return e
@@ -60,7 +60,7 @@ func updateRun(filename string, opts *options) error {
 	return nil
 }
 
-func load(block *mdcode.Block, dir string, status statusFunc) error {
+func load(block *mdcode.Block, dir string, em emitter) error {
 	filename := block.Meta.Get(metaFile)
 	if len(filename) == 0 {
 		return nil
@@ -73,7 +73,7 @@ func load(block *mdcode.Block, dir string, status statusFunc) error {
 		return err
 	}
 
-	code, err = loadTransform(filename, code, block, status)
+	code, err = loadTransform(filename, code, block, em)
 	if err != nil {
 		return err
 	}
@@ -83,10 +83,10 @@ func load(block *mdcode.Block, dir string, status statusFunc) error {
 	return nil
 }
 
-func loadTransform(filename string, code []byte, block *mdcode.Block, status statusFunc) ([]byte, error) {
+func loadTransform(filename string, code []byte, block *mdcode.Block, em emitter) ([]byte, error) {
 	regionname := block.Meta.Get(metaRegion)
 	if len(regionname) != 0 {
-		status("%s#%s\n", filename, regionname)
+		em.Emit(FileProcess, "%s#%s\n", filename, regionname)
 
 		data, ok, err := region.Read(code, regionname)
 		if err != nil {
@@ -100,7 +100,7 @@ func loadTransform(filename string, code []byte, block *mdcode.Block, status sta
 		return data, nil
 	}
 
-	status("%s\n", filename)
+	em.Emit(FileProcess, "%s\n", filename)
 
 	outline := block.Meta.Get(metaOutline)
 	if outline == "true" {

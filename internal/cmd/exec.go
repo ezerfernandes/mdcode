@@ -40,7 +40,7 @@ func execCmd(opts *options) *cobra.Command {
 		Long:    execHelp,
 		Args:    checkargs,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
-			opts.createStatus(cmd.ErrOrStderr())
+			opts.createEmitter(cmd.ErrOrStderr())
 
 			fileChanged := cmd.Flag("file").Changed
 			langChanged := cmd.Flag("lang").Changed
@@ -127,7 +127,7 @@ func execPerBlock(filename string, src []byte, dir string, opts *options, scr st
 	var failures int
 
 	modified, result, err := walk(src, func(block *mdcode.Block) error {
-		info := writeBlockToTemp(block, index, dir, opts.status)
+		info := writeBlockToTemp(block, index, dir, opts.emit)
 		index++
 
 		if info == nil {
@@ -136,10 +136,10 @@ func execPerBlock(filename string, src []byte, dir string, opts *options, scr st
 
 		expanded := expandCommand(scr, info, dir)
 
-		opts.status("--- block %d (%s%s) : L%d-%d : %s ---\n", info.index, info.lang, fileLabel(info.file), info.startLine, info.endLine, filepath.Base(filename))
+		opts.emit.Emit(BlockHeader, "--- block %d (%s%s) : L%d-%d : %s ---\n", info.index, info.lang, fileLabel(info.file), info.startLine, info.endLine, filepath.Base(filename))
 
 		if verbose {
-			opts.status("%s\n", expanded)
+			opts.emit.Emit(BlockCommand, "%s\n", expanded)
 		}
 
 		exitCode, execErr := runCommand(expanded, dir, os.Stdout, os.Stderr)
@@ -151,13 +151,13 @@ func execPerBlock(filename string, src []byte, dir string, opts *options, scr st
 			failures++
 
 			if update {
-				opts.status("\nwarning: block %d exited with %d, skipping update\n", info.index, exitCode)
+				opts.emit.Emit(WarnExit, "\nwarning: block %d exited with %d, skipping update\n", info.index, exitCode)
 
 				return nil
 			}
 		}
 
-		opts.status("\n")
+		opts.emit.Emit(BlockDone, "\n")
 
 		if update {
 			newCode, readErr := os.ReadFile(info.tempPath)
@@ -194,7 +194,7 @@ func execBatch(filename string, src []byte, dir string, opts *options, scr strin
 	index := 1
 
 	_, _, err := walk(src, func(block *mdcode.Block) error {
-		info := writeBlockToTemp(block, index, dir, opts.status)
+		info := writeBlockToTemp(block, index, dir, opts.emit)
 		index++
 
 		if info != nil {
@@ -220,7 +220,7 @@ func execBatch(filename string, src []byte, dir string, opts *options, scr strin
 	expanded := strings.ReplaceAll(scr, "{}", strings.Join(paths, " "))
 	expanded = strings.ReplaceAll(expanded, "{dir}", dir)
 
-	opts.status("--- batch (%d blocks) ---\n", len(entries))
+	opts.emit.Emit(BatchHeader, "--- batch (%d blocks) ---\n", len(entries))
 
 	exitCode, execErr := runCommand(expanded, dir, os.Stdout, os.Stderr)
 	if execErr != nil {
@@ -229,7 +229,7 @@ func execBatch(filename string, src []byte, dir string, opts *options, scr strin
 
 	if update {
 		if exitCode != 0 {
-			opts.status("warning: command exited with %d, skipping update\n", exitCode)
+			opts.emit.Emit(WarnExit, "warning: command exited with %d, skipping update\n", exitCode)
 
 			return nil
 		}
@@ -270,7 +270,7 @@ func execBatch(filename string, src []byte, dir string, opts *options, scr strin
 	return nil
 }
 
-func writeBlockToTemp(block *mdcode.Block, index int, dir string, status statusFunc) *blockInfo {
+func writeBlockToTemp(block *mdcode.Block, index int, dir string, em emitter) *blockInfo {
 	info := &blockInfo{
 		index:     index,
 		lang:      block.Lang,
@@ -282,13 +282,13 @@ func writeBlockToTemp(block *mdcode.Block, index int, dir string, status statusF
 	info.tempPath = filepath.Join(dir, tempFilename(block, index))
 
 	if err := os.MkdirAll(filepath.Dir(info.tempPath), dirMode); err != nil {
-		status("warning: failed to create directory for block %d: %v\n", index, err)
+		em.Emit(WarnIO, "warning: failed to create directory for block %d: %v\n", index, err)
 
 		return nil
 	}
 
 	if err := os.WriteFile(info.tempPath, block.Code, fileMode); err != nil {
-		status("warning: failed to write block %d: %v\n", index, err)
+		em.Emit(WarnIO, "warning: failed to write block %d: %v\n", index, err)
 
 		return nil
 	}

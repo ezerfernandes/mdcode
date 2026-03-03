@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"io"
 	"strings"
 )
@@ -12,8 +11,6 @@ const (
 	metaOutline = "outline"
 	metaName    = "name"
 )
-
-type statusFunc func(format string, args ...any)
 
 type options struct {
 	lang []string
@@ -30,7 +27,7 @@ type options struct {
 	keep  bool
 
 	filter filterFunc
-	status statusFunc
+	emit   emitter
 }
 
 func (o *options) createFilter() error {
@@ -58,12 +55,10 @@ func (o *options) createFilter() error {
 	return nil
 }
 
-func (o *options) createStatus(stderr io.Writer) {
+func (o *options) createEmitter(stderr io.Writer) {
 	if o.quiet {
-		o.status = func(format string, args ...any) {}
+		o.emit = &nopEmitter{}
 	} else {
-		o.status = func(format string, args ...any) {
-			fmt.Fprintf(stderr, format, args...)
-		}
+		o.emit = &textEmitter{w: stderr}
 	}
 }

@@ -24,7 +24,7 @@ func extractCmd(opts *options) *cobra.Command {
 		Long:    extractHelp,
 		Args:    checkargs,
 		PreRun: func(cmd *cobra.Command, _ []string) {
-			opts.createStatus(cmd.ErrOrStderr())
+			opts.createEmitter(cmd.ErrOrStderr())
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return extractRun(source(args), opts)
@@ -40,7 +40,7 @@ func extractCmd(opts *options) *cobra.Command {
 }
 
 func extractRun(filename string, opts *options) error {
-	opts.status("Extracting code blocks from %s\n", filename)
+	opts.emit.Emit(OpStart, "Extracting code blocks from %s\n", filename)
 
 	src, err := os.ReadFile(filename)
 	if err != nil {
@@ -48,13 +48,13 @@ func extractRun(filename string, opts *options) error {
 	}
 
 	_, _, err = walk(src, func(block *mdcode.Block) error {
-		return save(block, opts.dir, opts.status)
+		return save(block, opts.dir, opts.emit)
 	}, opts.filter)
 
 	return err
 }
 
-func save(block *mdcode.Block, dir string, status statusFunc) error {
+func save(block *mdcode.Block, dir string, em emitter) error {
 	filename := block.Meta.Get(metaFile)
 	if len(filename) == 0 {
 		return nil
@@ -62,7 +62,7 @@ func save(block *mdcode.Block, dir string, status statusFunc) error {
 
 	filename = rel(dir, filepath.FromSlash(filename))
 
-	code, partial, err := saveTransform(filename, block, os.DirFS("."), status)
+	code, partial, err := saveTransform(filename, block, os.DirFS("."), em)
 	if err != nil {
 		return err
 	}
@@ -76,15 +76,15 @@ func save(block *mdcode.Block, dir string, status statusFunc) error {
 	return os.WriteFile(filename, code, fileMode)
 }
 
-func saveTransform(filename string, block *mdcode.Block, fsys fs.FS, status statusFunc) ([]byte, bool, error) {
+func saveTransform(filename string, block *mdcode.Block, fsys fs.FS, em emitter) ([]byte, bool, error) {
 	regionname := block.Meta.Get(metaRegion)
 	if len(regionname) == 0 {
-		status("%s\n", filename)
+		em.Emit(FileProcess, "%s\n", filename)
 
 		return block.Code, false, nil
 	}
 
-	status("%s#%s\n", filename, regionname)
+	em.Emit(FileProcess, "%s#%s\n", filename, regionname)
 
 	orig, err := fs.ReadFile(fsys, filepath.ToSlash(filename))
 	if err != nil {
