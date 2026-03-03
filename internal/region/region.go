@@ -91,7 +91,7 @@ func Replace(source []byte, name string, value []byte) ([]byte, bool, error) {
 }
 
 func Outline(source []byte) ([]byte, bool, error) {
-	res := make([]byte, 0)
+	res := make([]byte, 0, len(source))
 	found := false
 	idx := 0
 
