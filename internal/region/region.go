@@ -98,7 +98,7 @@ func Replace(source []byte, name string, value []byte) ([]byte, bool, error) {
 // Outline strips the body of every region, keeping only the #region and
 // #endregion markers. The bool return indicates whether any regions were found.
 func Outline(source []byte) ([]byte, bool, error) {
-	res := make([]byte, 0)
+	res := make([]byte, 0, len(source))
 	found := false
 	idx := 0
 

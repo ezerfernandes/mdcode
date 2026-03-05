@@ -130,24 +130,32 @@ func extractLines(fcb *ast.FencedCodeBlock, source []byte) (int, int) {
 }
 
 func lineAt(source []byte, offset int) int {
-	line := 1
-
-	for i := 0; i < offset && i < len(source); i++ {
-		if source[i] == '\n' {
-			line++
-		}
+	if offset > len(source) {
+		offset = len(source)
 	}
 
-	return line
+	return 1 + bytes.Count(source[:offset], []byte{'\n'})
 }
 
 func extractCode(fcb *ast.FencedCodeBlock, source []byte) []byte {
-	var buff bytes.Buffer
-
 	lines := fcb.Lines()
-	for i := 0; i < lines.Len(); i++ {
-		seg := lines.At(i)
+	n := lines.Len()
 
+	if n == 0 {
+		return nil
+	}
+
+	size := 0
+	for i := 0; i < n; i++ {
+		seg := lines.At(i)
+		size += seg.Len()
+	}
+
+	var buff bytes.Buffer
+	buff.Grow(size)
+
+	for i := 0; i < n; i++ {
+		seg := lines.At(i)
 		buff.Write(seg.Value(source))
 	}
 
