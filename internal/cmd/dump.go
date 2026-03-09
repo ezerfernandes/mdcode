@@ -3,6 +3,7 @@ package cmd
 import (
 	"archive/tar"
 	_ "embed"
+	"fmt"
 	"io"
 	"io/fs"
 	"os"
@@ -54,7 +55,7 @@ func dumpRun(filename string, out io.Writer, opts *options) error {
 
 	src, err := os.ReadFile(filename)
 	if err != nil {
-		return err
+		return fmt.Errorf("reading %s: %w", filename, err)
 	}
 
 	mfs := memoryfs.New()
@@ -84,11 +85,15 @@ func dump(block *mdcode.Block, mfs *memoryfs.FS, dir string, status statusFunc) 
 
 	if !partial {
 		if err := mfs.MkdirAll(filepath.Dir(filename), dirMode); err != nil {
-			return err
+			return fmt.Errorf("creating directory for %s: %w", filename, err)
 		}
 	}
 
-	return mfs.WriteFile(filename, code, fileMode)
+	if err := mfs.WriteFile(filename, code, fileMode); err != nil {
+		return fmt.Errorf("writing %s: %w", filename, err)
+	}
+
+	return nil
 }
 
 func archive(mfs *memoryfs.FS, out io.Writer) error {

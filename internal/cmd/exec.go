@@ -77,7 +77,7 @@ func execCmd(opts *options) *cobra.Command {
 			if !cmd.Flag("dir").Changed {
 				dir, err := os.MkdirTemp(".", "mdcode-exec-")
 				if err != nil {
-					return err
+					return fmt.Errorf("creating temp directory: %w", err)
 				}
 
 				opts.dir = dir
@@ -107,12 +107,12 @@ func execCmd(opts *options) *cobra.Command {
 func execRun(filename string, opts *options, scr string, update, batch, verbose bool) error {
 	src, err := os.ReadFile(filename)
 	if err != nil {
-		return err
+		return fmt.Errorf("reading %s: %w", filename, err)
 	}
 
 	absDir, err := filepath.Abs(opts.dir)
 	if err != nil {
-		return err
+		return fmt.Errorf("resolving path %s: %w", opts.dir, err)
 	}
 
 	if batch {
@@ -177,7 +177,7 @@ func execPerBlock(filename string, src []byte, dir string, opts *options, scr st
 
 	if update && modified {
 		if err := os.WriteFile(filename, result, fileMode); err != nil {
-			return err
+			return fmt.Errorf("writing %s: %w", filename, err)
 		}
 	}
 

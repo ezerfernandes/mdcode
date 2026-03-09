@@ -43,7 +43,7 @@ func updateRun(filename string, opts *options) error {
 
 	src, err := os.ReadFile(filename)
 	if err != nil {
-		return err
+		return fmt.Errorf("reading %s: %w", filename, err)
 	}
 
 	modified, res, e := walk(src, func(block *mdcode.Block) error {
@@ -54,7 +54,9 @@ func updateRun(filename string, opts *options) error {
 	}
 
 	if modified {
-		return os.WriteFile(filename, res, fileMode)
+		if err := os.WriteFile(filename, res, fileMode); err != nil {
+			return fmt.Errorf("writing %s: %w", filename, err)
+		}
 	}
 
 	return nil
@@ -70,7 +72,7 @@ func load(block *mdcode.Block, dir string, status statusFunc) error {
 
 	code, err := os.ReadFile(filename)
 	if err != nil {
-		return err
+		return fmt.Errorf("reading %s: %w", filename, err)
 	}
 
 	code, err = loadTransform(filename, code, block, status)

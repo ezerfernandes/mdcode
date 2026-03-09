@@ -63,9 +63,11 @@ func src2glob(key string, src ...string) (glob.Glob, error) { //nolint:ireturn
 		separators = append(separators, '/', '\\')
 	}
 
-	g, err := glob.Compile(fmt.Sprintf("{%s}", strings.Join(src, ",")), separators...)
+	pattern := fmt.Sprintf("{%s}", strings.Join(src, ","))
+
+	g, err := glob.Compile(pattern, separators...)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("compiling filter pattern %q: %w", pattern, err)
 	}
 
 	return g, nil

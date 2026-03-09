@@ -46,7 +46,7 @@ func parseMeta(input []byte) (Meta, error) {
 
 		err := json.Unmarshal(input, &meta)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("invalid code block metadata: %w", err)
 		}
 
 		return meta, nil
@@ -58,7 +58,7 @@ func parseMeta(input []byte) (Meta, error) {
 
 	words, err := shlex.Split(string(input))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parsing code block metadata: %w", err)
 	}
 
 	dict := make(Meta)
