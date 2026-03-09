@@ -44,7 +44,7 @@ func extractRun(filename string, opts *options) error {
 
 	src, err := os.ReadFile(filename)
 	if err != nil {
-		return err
+		return fmt.Errorf("reading %s: %w", filename, err)
 	}
 
 	_, _, err = walk(src, func(block *mdcode.Block) error {
@@ -69,11 +69,15 @@ func save(block *mdcode.Block, dir string, status statusFunc) error {
 
 	if !partial {
 		if err := os.MkdirAll(filepath.Dir(filename), dirMode); err != nil {
-			return err
+			return fmt.Errorf("creating directory for %s: %w", filename, err)
 		}
 	}
 
-	return os.WriteFile(filename, code, fileMode)
+	if err := os.WriteFile(filename, code, fileMode); err != nil {
+		return fmt.Errorf("writing %s: %w", filename, err)
+	}
+
+	return nil
 }
 
 func saveTransform(filename string, block *mdcode.Block, fsys fs.FS, status statusFunc) ([]byte, bool, error) {
@@ -88,7 +92,7 @@ func saveTransform(filename string, block *mdcode.Block, fsys fs.FS, status stat
 
 	orig, err := fs.ReadFile(fsys, filepath.ToSlash(filename))
 	if err != nil {
-		return nil, false, err
+		return nil, false, fmt.Errorf("reading %s: %w", filename, err)
 	}
 
 	data, mod, err := region.Replace(orig, regionname, block.Code)

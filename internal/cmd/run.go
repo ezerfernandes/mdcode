@@ -34,7 +34,7 @@ func runCmd(opts *options) *cobra.Command {
 			if !cmd.Flag("dir").Changed {
 				dir, err := os.MkdirTemp(".", "mdcode-tmp-")
 				if err != nil {
-					return err
+					return fmt.Errorf("creating temp directory: %w", err)
 				}
 
 				opts.dir = dir
@@ -67,7 +67,7 @@ func isScript(lang string, meta mdcode.Meta) bool {
 func findScript(filename string, opts *options) (string, error) {
 	src, err := os.ReadFile(filename)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("reading %s: %w", filename, err)
 	}
 
 	var script string
@@ -126,7 +126,7 @@ func runRun(filename string, opts *options, script string) error {
 
 	file, err := syntax.NewParser().Parse(strings.NewReader(script), "")
 	if err != nil {
-		return err
+		return fmt.Errorf("parsing script: %w", err)
 	}
 
 	runner, err := interp.New(interp.Dir(opts.dir), interp.StdIO(os.Stdin, os.Stdout, os.Stderr))

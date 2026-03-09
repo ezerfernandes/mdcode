@@ -34,7 +34,7 @@ func marker(format string, name string) (*regexp.Regexp, error) {
 func findRegion(source []byte, name string) (bool, int, int, error) {
 	reBegin, err := marker(regionFormat, name)
 	if err != nil {
-		return false, 0, 0, err
+		return false, 0, 0, fmt.Errorf("compiling region pattern for %q: %w", name, err)
 	}
 
 	idxBegin := reBegin.FindIndex(source)
@@ -44,7 +44,7 @@ func findRegion(source []byte, name string) (bool, int, int, error) {
 
 	namedEnd, err := marker(namedendFormat, name)
 	if err != nil {
-		return false, 0, 0, err
+		return false, 0, 0, fmt.Errorf("compiling endregion pattern for %q: %w", name, err)
 	}
 
 	idxEnd := namedEnd.FindIndex(source[idxBegin[1]:])
