@@ -99,6 +99,8 @@ func RootCmd() *cobra.Command {
 	cmd.AddCommand(runCmd(opts))
 	cmd.AddCommand(execCmd(opts))
 
+	cmd.AddCommand(entropyCmd())
+
 	cmd.AddCommand(metadataTopic(), filteringTopic(), regionsTopic(), invisibleTopic(), outlineTopic())
 
 	return cmd
