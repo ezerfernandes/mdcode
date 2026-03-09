@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+	"os"
+)
+
+var out io.Writer = os.Stdout
 
 func main() {
-	fmt.Println("Hello, Testable World!")
+	fmt.Fprintln(out, "Hello, Testable World!")
 }
