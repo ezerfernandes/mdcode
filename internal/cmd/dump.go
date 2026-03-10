@@ -22,7 +22,7 @@ func dumpCmd(opts *options) *cobra.Command {
 		Aliases: []string{"d"},
 		Short:   "Dump markdown code blocks",
 		Long:    dumpHelp,
-		Args:    cobra.MaximumNArgs(1),
+		Args:    checkargs,
 		PreRun: func(cmd *cobra.Command, _ []string) {
 			opts.createStatus(cmd.ErrOrStderr())
 		},

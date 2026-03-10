@@ -551,6 +551,7 @@ mdcode exec [flags] [filename] [-- command]
   -k, --keep         don't remove temporary directory
   -q, --quiet        suppress the status output
       --update       update markdown code blocks with modified files
+  -v, --verbose      show the command being executed for each block
 ```
 
 ### Global Flags
