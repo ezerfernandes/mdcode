@@ -58,7 +58,7 @@ func runCmd(opts *options) *cobra.Command {
 	return cmd
 }
 
-var reShell = regexp.MustCompile("(ba|z)?sh")
+var reShell = regexp.MustCompile("^(ba|z)?sh$")
 
 func isScript(lang string, meta mdcode.Meta) bool {
 	return reShell.MatchString(lang) && len(meta.Get(metaName)) != 0
