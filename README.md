@@ -469,11 +469,54 @@ mdcode [flags] [filename]
 
 ### SEE ALSO
 
+* [mdcode check](#mdcode-check)	 - Verify markdown code blocks are in sync with source files
 * [mdcode dump](#mdcode-dump)	 - Dump markdown code blocks
 * [mdcode exec](#mdcode-exec)	 - Execute shell commands on individual code blocks
 * [mdcode extract](#mdcode-extract)	 - Extract markdown code blocks to the file system
 * [mdcode run](#mdcode-run)	 - Run shell commands on markdown code blocks
 * [mdcode update](#mdcode-update)	 - Update markdown code blocks from the file system
+
+---
+## mdcode check
+
+Verify markdown code blocks are in sync with source files
+
+### Synopsis
+
+Verify that code blocks in the markdown document are in sync with their source files
+
+The code blocks are compared with the file named in the `file` metadata. The file name is relative to the current directory or to the directory specified with the `--dir` flag.
+
+The code block may include `region` metadata, which contains the name of the region. In this case, the code block is compared with the appropriate part of the file marked with the `#region` comment.
+
+The optional argument of the `mdcode check` command is the name of the markdown file. If it is missing, the `README.md` file in the current directory (if it exists) is processed.
+
+Exits with code 1 if any code blocks are out of sync with their source files. This makes it suitable for use in CI pipelines to detect documentation drift.
+
+
+```
+mdcode check [flags] [filename]
+```
+
+### Flags
+
+```
+  -d, --dir string   base directory name (default ".")
+  -h, --help         help for check
+  -q, --quiet        suppress the status output
+```
+
+### Global Flags
+
+```
+  -f, --file strings          file filter (default [?*])
+  -l, --lang strings          language filter (default [?*])
+  -m, --meta stringToString   metadata filter (default [])
+```
+
+### SEE ALSO
+
+* [mdcode](#mdcode)	 - Markdown code block authoring tool
 
 ---
 ## mdcode dump
@@ -551,6 +594,7 @@ mdcode exec [flags] [filename] [-- command]
   -k, --keep         don't remove temporary directory
   -q, --quiet        suppress the status output
       --update       update markdown code blocks with modified files
+  -v, --verbose      show the command being executed for each block
 ```
 
 ### Global Flags
