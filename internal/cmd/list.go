@@ -79,11 +79,16 @@ func listJSON(out io.Writer, blocks []*mdcode.Block) error {
 	enc := json.NewEncoder(out)
 
 	for _, b := range blocks {
-		if len(b.Lang) != 0 {
-			b.Meta["lang"] = b.Lang
+		m := make(mdcode.Meta, len(b.Meta)+1)
+		for k, v := range b.Meta {
+			m[k] = v
 		}
 
-		if err := enc.Encode(b.Meta); err != nil {
+		if len(b.Lang) != 0 {
+			m["lang"] = b.Lang
+		}
+
+		if err := enc.Encode(m); err != nil {
 			return err
 		}
 	}
@@ -137,5 +142,5 @@ func unfence(src []byte, filter filterFunc) (mdcode.Blocks, error) {
 		return nil, err
 	}
 
-	return blocks, err
+	return blocks, nil
 }

@@ -18,7 +18,7 @@ var dumpHelp string
 
 func dumpCmd(opts *options) *cobra.Command {
 	cmd := &cobra.Command{ //nolint:exhaustruct
-		Use:     "dump  [flags] [filename]",
+		Use:     "dump [flags] [filename]",
 		Aliases: []string{"d"},
 		Short:   "Dump markdown code blocks",
 		Long:    dumpHelp,
